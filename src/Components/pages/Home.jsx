@@ -247,7 +247,7 @@ export default function Home() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-4 text-gray-900 dark:text-white">
+      <h1 className="text-3xl font-logo2 mb-4 text-gray-900 dark:text-white">
         Shopping List
       </h1>
 

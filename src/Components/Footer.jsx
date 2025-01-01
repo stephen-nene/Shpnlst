@@ -22,7 +22,7 @@ export default function Footer({ darkMode, setDarkMode }) {
         <nav className="flex space-x-6 mt-4 md:mt-0">
           <NavLink
             to="/"
-            className="hover:text-green-600 dark:hover:text-white"
+            className="hover:text-green-600 dark:hover:text-emerald-600"
           >
             Home
           </NavLink>
@@ -43,8 +43,9 @@ export default function Footer({ darkMode, setDarkMode }) {
       {/* Contact */}
       <div className="mt-4 text-center text-sm">
         <p>
-          Contact us via{" "}
+          Contact me via{" "}
           <a
+            target="_blank"
             href="https://wa.me/+254741780970"
             className="text-blue-600 dark:text-blue-400"
           >

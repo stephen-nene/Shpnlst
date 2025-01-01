@@ -5,7 +5,9 @@
 
 a.active{
     color: red;
-    font-weight: bold;
+    font-weight: semibold;
     transition: color 0.5s ease-in-out;
-
+    &:hover{
+        color: #059669;
+    }
 }
