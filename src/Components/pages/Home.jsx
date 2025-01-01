@@ -18,12 +18,12 @@ const Item = ({ item, onEdit, onDelete, onCheck }) => {
       }`}
     >
       <div className="flex justify-between items-center">
-        <>
+        <div>
           <p className="text-lg font-medium">{item.name}</p>
           <p className="text-sm dark:text-gray-400">
             {item.quantity} {item.amount}
           </p>
-        </>
+        </div>
         <div className="flex items-center text-2xl gap-3 space-x-2">
           <button
             onClick={() => onEdit(item.id)}
