@@ -1,10 +1,10 @@
 **Instructions for Contributing**
 
 1. **Fork the Repository**  
-   Fork the repository to your own GitHub account by clicking on the "Fork" button at the top-right of this page.
+   Fork the repository to your own GitHub account by clicking on the "Fork" button .
 
 2. **Clone Your Fork Locally**  
-   After forking, clone the repository to your local machine using the following command:
+   Clone the repository to your local machine using the following command:
 
 ```bash
    git clone https://github.com/YOUR_USERNAME/REPOSITORY_NAME.git
