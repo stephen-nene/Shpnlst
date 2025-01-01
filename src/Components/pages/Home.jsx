@@ -6,6 +6,15 @@ const generateId = () => {
   return `id-${Math.random().toString(36).substring(2, 11)}`;
 };
 
+const calculateTotalPrice = (items) => {
+  return items.reduce((total, item) => {
+    if (item.price) {
+      return total + parseFloat(item.price); 
+    }
+    return total;
+  }, 0);
+};
+
 // Item component
 const Item = ({ item, onEdit, onDelete, onCheck }) => {
   return (
@@ -18,11 +27,16 @@ const Item = ({ item, onEdit, onDelete, onCheck }) => {
       }`}
     >
       <div className="flex justify-between items-center">
-        <div>
+        <div className="flex-1">
           <p className="text-lg font-medium">{item.name}</p>
           <p className="text-sm dark:text-gray-400">
             {item.quantity} {item.amount}
           </p>
+          {item.price && (
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Price: Ksh {item.price}
+            </p>
+          )}
         </div>
         <div className="flex items-center text-2xl gap-3 space-x-2">
           <button
@@ -58,6 +72,8 @@ const ItemForm = ({
   setQuantity,
   amount,
   setAmount,
+  price,
+  setPrice,
   editingIndex,
 }) => {
   return (
@@ -116,12 +132,29 @@ const ItemForm = ({
         </div>
       </div>
 
+      <div className="mb-4">
+        <label
+          htmlFor="price"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          Price per Unit
+        </label>
+        <input
+          id="price"
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="e.g. 1.99"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-600"
+        />
+      </div>
+
       <button
         type="submit"
         className={`px-4 py-2 bg-green-600 text-white rounded-md flex items-center space-x-2 dark:bg-green-800 ${
           !name ? "opacity-50 cursor-not-allowed" : ""
         }`}
-        disabled={!name} 
+        disabled={!name}
       >
         <FaPlus />{" "}
         <span>{editingIndex !== null ? "Update Item" : "Add Item"}</span>
@@ -136,18 +169,25 @@ export default function Home() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [amount, setAmount] = useState("");
+  const [price, setPrice] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
+
+    const totalPrice = calculateTotalPrice(items);
+
 
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem("items"));
+    // console.log(savedItems);
     if (savedItems) {
       setItems(savedItems);
     }
   }, []);
 
   useEffect(() => {
-    if (items.length >= 0) {
+    if (items.length > 0) {
       localStorage.setItem("items", JSON.stringify(items));
+    } else {
+      localStorage.removeItem("items");
     }
   }, [items]);
 
@@ -163,6 +203,7 @@ export default function Home() {
       name,
       amount: amount || "pieces",
       quantity: quantity || 1,
+      price: price,
       checked: false,
     };
 
@@ -178,6 +219,7 @@ export default function Home() {
     setName("");
     setQuantity("");
     setAmount("");
+    setPrice("");
   };
 
   const handleDeleteItem = (id) => {
@@ -197,6 +239,7 @@ export default function Home() {
     setName(item.name);
     setQuantity(item.quantity);
     setAmount(item.amount);
+    setPrice(item.price);
     setEditingIndex(items.indexOf(item));
   };
 
@@ -216,6 +259,8 @@ export default function Home() {
         setQuantity={setQuantity}
         amount={amount}
         setAmount={setAmount}
+        price={price}
+        setPrice={setPrice}
         editingIndex={editingIndex}
       />
 
@@ -229,17 +274,24 @@ export default function Home() {
             No items in the list yet. Start by adding your first item!
           </p>
         ) : (
-          <ul className="space-y-4">
-            {sortedItems.map((item) => (
-              <Item
-                key={item.id}
-                item={item}
-                onEdit={handleEditItem}
-                onDelete={handleDeleteItem}
-                onCheck={handleCheckboxChange}
-              />
-            ))}
-          </ul>
+          <>
+            <ul className="space-y-4">
+              {sortedItems.map((item) => (
+                <Item
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEditItem}
+                  onDelete={handleDeleteItem}
+                  onCheck={handleCheckboxChange}
+                />
+              ))}
+            </ul>
+            <div className="mt-4 p-4 border border-gray-300 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600">
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                Total Price: Ksh {totalPrice.toFixed(2)}
+              </p>
+            </div>
+          </>
         )}
       </div>
     </div>
