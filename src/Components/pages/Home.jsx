@@ -121,7 +121,7 @@ const ItemForm = ({
         className={`px-4 py-2 bg-green-600 text-white rounded-md flex items-center space-x-2 dark:bg-green-800 ${
           !name ? "opacity-50 cursor-not-allowed" : ""
         }`}
-        disabled={!name} // Disable the button if no title is entered
+        disabled={!name} 
       >
         <FaPlus />{" "}
         <span>{editingIndex !== null ? "Update Item" : "Add Item"}</span>
