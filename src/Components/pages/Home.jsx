@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
+import ReactMetaTags from "react-meta-tags";
+
 
 // Custom ID generator
 const generateId = () => {
@@ -247,6 +249,25 @@ export default function Home() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
+      <ReactMetaTags>
+        <title>Shopping List App</title>
+        <meta
+          name="description"
+          content="Manage your shopping list with ease, add items, track prices, and more."
+        />
+        <meta
+          name="keywords"
+          content="shopping list, price tracker, manage shopping list, add items, shopping app, grocery list"
+        />
+        <meta property="og:title" content="Shopping List App" />
+        <meta
+          property="og:description"
+          content="Manage your shopping list with ease, track your items and their prices."
+        />
+        {/* <meta property="og:image" content="link-to-image.jpg" /> */}
+        <meta property="og:url" content="https://shpnlst.vercel.app/" />
+        <meta name="robots" content="index, follow" />
+      </ReactMetaTags>
       <h1 className="text-3xl font-logo2 mb-4 text-gray-900 dark:text-white">
         Shopping List
       </h1>

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactMetaTags from "react-meta-tags";
 import {
   FaGithub,
   FaLinkedin,
@@ -10,6 +11,35 @@ import {
 export default function About() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+      {/* Adding meta tags for SEO */}
+      <ReactMetaTags>
+        <title>About the Shopping List App</title>
+        <meta
+          name="description"
+          content="This app lets you easily manage your shopping items, add new ones, mark them as found, and even edit or remove them."
+        />
+        <meta property="og:title" content="About the Shopping List App" />
+        <meta
+          property="og:description"
+          content="A digital shopping list app that helps you manage and organize your items."
+        />
+        <meta
+          property="og:image"
+          content="https://www.example.com/path-to-image.jpg" // Add your image URL here
+        />
+        <meta property="og:url" content="https://www.example.com/about" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="About the Shopping List App" />
+        <meta
+          name="twitter:description"
+          content="This app helps you manage your shopping list with ease."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.example.com/path-to-image.jpg" // Add your image URL here
+        />
+      </ReactMetaTags>
+
       <div className="max-w-3xl mx-auto px-4 py-16">
         <h1 className="text-3xl font-bold text-center mb-6">
           About the Shopping List App

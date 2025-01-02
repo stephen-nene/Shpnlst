@@ -7,6 +7,8 @@ import Footer from "../Components/Footer";
 import Home from "../Components/pages/Home";
 import About from "../Components/pages/About";
 
+import Error404 from "../Components/pages/Error404";
+
 function App() {
   // Check localStorage for darkMode preference on app start and default to false if not found
   const [darkMode, setDarkMode] = useState(() => {
@@ -23,6 +25,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+
+          <Route path="*" element={<Error404 />} />
         </Routes>
       </div>
       <Footer darkMode={darkMode} setDarkMode={setDarkMode} />

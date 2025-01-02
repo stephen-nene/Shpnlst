@@ -12,7 +12,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
   };
 
   return (
-    <div className="navbar sticky top-0 bg-white dark:bg-gray-950 dark:text-white p-4 shadow-md">
+    <div className="navbar sticky top-0 bg-white dark:bg-gray-950 dark:text-white p-4 shadow-md z-10">
       <div className="flex justify-between items-center">
         <div>
           <NavLink
