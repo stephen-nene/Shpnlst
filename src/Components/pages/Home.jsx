@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
-import ReactMetaTags from "react-meta-tags";
-
+import { Helmet } from "react-helmet";
 
 // Custom ID generator
 const generateId = () => {
@@ -11,7 +10,7 @@ const generateId = () => {
 const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => {
     if (item.price) {
-      return total + parseFloat(item.price); 
+      return total + parseFloat(item.price);
     }
     return total;
   }, 0);
@@ -174,8 +173,7 @@ export default function Home() {
   const [price, setPrice] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
 
-    const totalPrice = calculateTotalPrice(items);
-
+  const totalPrice = calculateTotalPrice(items);
 
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem("items"));
@@ -249,7 +247,7 @@ export default function Home() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <ReactMetaTags>
+      <Helmet>
         <title>Shopping List App</title>
         <meta
           name="description"
@@ -267,11 +265,10 @@ export default function Home() {
         {/* <meta property="og:image" content="link-to-image.jpg" /> */}
         <meta property="og:url" content="https://shpnlst.vercel.app/" />
         <meta name="robots" content="index, follow" />
-      </ReactMetaTags>
+      </Helmet>
       <h1 className="text-3xl font-logo2 mb-4 text-gray-900 dark:text-white">
         Shopping List
       </h1>
-
       <ItemForm
         onSubmit={handleAddItem}
         name={name}

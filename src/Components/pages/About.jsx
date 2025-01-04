@@ -1,5 +1,5 @@
 import React from "react";
-import ReactMetaTags from "react-meta-tags";
+import { Helmet } from "react-helmet";
 import {
   FaGithub,
   FaLinkedin,
@@ -12,7 +12,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
       {/* Adding meta tags for SEO */}
-      <ReactMetaTags>
+      <Helmet>
         <title>About the Shopping List App</title>
         <meta
           name="description"
@@ -38,7 +38,7 @@ export default function About() {
           name="twitter:image"
           content="https://www.example.com/path-to-image.jpg" // Add your image URL here
         />
-      </ReactMetaTags>
+      </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 py-16">
         <h1 className="text-3xl font-bold text-center mb-6">
