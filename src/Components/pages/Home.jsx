@@ -65,18 +65,7 @@ const Item = ({ item, onEdit, onDelete, onCheck }) => {
 };
 
 // Form component
-const ItemForm = ({
-  onSubmit,
-  name,
-  setName,
-  quantity,
-  setQuantity,
-  amount,
-  setAmount,
-  price,
-  setPrice,
-  editingIndex,
-}) => {
+const ItemForm = ({ onSubmit, item, setItem, editingIndex }) => {
   return (
     <form onSubmit={onSubmit} className="mb-6">
       <div className="mb-4">
@@ -89,8 +78,8 @@ const ItemForm = ({
         <input
           id="item-name"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={item.name}
+          onChange={(e) => setItem({ ...item, name: e.target.value })}
           placeholder="e.g. Rice"
           className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-600"
           required
@@ -108,8 +97,8 @@ const ItemForm = ({
           <input
             id="quantity"
             type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
+            value={item.quantity}
+            onChange={(e) => setItem({ ...item, quantity: e.target.value })}
             placeholder="e.g. 4"
             className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-600"
           />
@@ -125,8 +114,8 @@ const ItemForm = ({
           <input
             id="amount"
             type="text"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={item.amount}
+            onChange={(e) => setItem({ ...item, amount: e.target.value })}
             placeholder="e.g. pieces, Kg, Ml, trays"
             className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-600"
           />
@@ -143,8 +132,8 @@ const ItemForm = ({
         <input
           id="price"
           type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          value={item.price}
+          onChange={(e) => setItem({ ...item, price: e.target.value })}
           placeholder="e.g. 1.99"
           className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white dark:border-gray-600"
         />
@@ -153,9 +142,9 @@ const ItemForm = ({
       <button
         type="submit"
         className={`px-4 py-2 bg-green-600 text-white rounded-md flex items-center space-x-2 dark:bg-green-800 ${
-          !name ? "opacity-50 cursor-not-allowed" : ""
+          !item.name ? "opacity-50 cursor-not-allowed" : ""
         }`}
-        disabled={!name}
+        disabled={!item.name}
       >
         <FaPlus />{" "}
         <span>{editingIndex !== null ? "Update Item" : "Add Item"}</span>
@@ -167,17 +156,18 @@ const ItemForm = ({
 // Main component
 export default function Home() {
   const [items, setItems] = useState([]);
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [amount, setAmount] = useState("");
-  const [price, setPrice] = useState("");
+  const [item, setItem] = useState({
+    name: "",
+    quantity: "",
+    amount: "",
+    price: "",
+  });
   const [editingIndex, setEditingIndex] = useState(null);
 
   const totalPrice = calculateTotalPrice(items);
 
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem("items"));
-    // console.log(savedItems);
     if (savedItems) {
       setItems(savedItems);
     }
@@ -193,17 +183,18 @@ export default function Home() {
 
   const handleAddItem = (e) => {
     e.preventDefault();
-    if (!name) {
-      alert("Please enter all fields!");
+    const trimmedName = item.name.trim();
+    if (!trimmedName || trimmedName.length < 4) {
+      alert("Please enter a name with at least 4 characters!");
       return;
     }
 
     const newItem = {
       id: generateId(),
-      name,
-      amount: amount || "pieces",
-      quantity: quantity || 1,
-      price: price,
+      name: trimmedName,
+      amount: item.amount || "pieces",
+      quantity: item.quantity || 1,
+      price: item.price,
       checked: false,
     };
 
@@ -216,10 +207,12 @@ export default function Home() {
       setItems([...items, newItem]);
     }
 
-    setName("");
-    setQuantity("");
-    setAmount("");
-    setPrice("");
+    setItem({
+      name: "",
+      quantity: "",
+      amount: "",
+      price: "",
+    });
   };
 
   const handleDeleteItem = (id) => {
@@ -235,12 +228,9 @@ export default function Home() {
   };
 
   const handleEditItem = (id) => {
-    const item = items.find((item) => item.id === id);
-    setName(item.name);
-    setQuantity(item.quantity);
-    setAmount(item.amount);
-    setPrice(item.price);
-    setEditingIndex(items.indexOf(item));
+    const itemToEdit = items.find((item) => item.id === id);
+    setItem(itemToEdit);
+    setEditingIndex(items.indexOf(itemToEdit));
   };
 
   const sortedItems = items.sort((a, b) => a.checked - b.checked);
@@ -262,55 +252,29 @@ export default function Home() {
           property="og:description"
           content="Manage your shopping list with ease, track your items and their prices."
         />
-        {/* <meta property="og:image" content="link-to-image.jpg" /> */}
         <meta property="og:url" content="https://shpnlst.vercel.app/" />
         <meta name="robots" content="index, follow" />
       </Helmet>
-      <h1 className="text-3xl font-logo2 mb-4 text-gray-900 dark:text-white">
-        Shopping List
-      </h1>
+      <h1 className="text-4xl font-bold text-center mb-4">Shopping List</h1>
       <ItemForm
         onSubmit={handleAddItem}
-        name={name}
-        setName={setName}
-        quantity={quantity}
-        setQuantity={setQuantity}
-        amount={amount}
-        setAmount={setAmount}
-        price={price}
-        setPrice={setPrice}
+        item={item}
+        setItem={setItem}
         editingIndex={editingIndex}
       />
-
-      <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Your Items
-        </h2>
-
-        {items.length === 0 ? (
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            No items in the list yet. Start by adding your first item!
-          </p>
-        ) : (
-          <>
-            <ul className="space-y-4">
-              {sortedItems.map((item) => (
-                <Item
-                  key={item.id}
-                  item={item}
-                  onEdit={handleEditItem}
-                  onDelete={handleDeleteItem}
-                  onCheck={handleCheckboxChange}
-                />
-              ))}
-            </ul>
-            <div className="mt-4 p-4 border border-gray-300 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">
-                Total Price: Ksh {totalPrice.toFixed(2)}
-              </p>
-            </div>
-          </>
-        )}
+      <ul className="space-y-4">
+        {sortedItems.map((item) => (
+          <Item
+            key={item.id}
+            item={item}
+            onEdit={handleEditItem}
+            onDelete={handleDeleteItem}
+            onCheck={handleCheckboxChange}
+          />
+        ))}
+      </ul>
+      <div className="mt-4 text-xl font-semibold">
+        Total Price: Ksh {totalPrice.toFixed(2)}
       </div>
     </div>
   );
