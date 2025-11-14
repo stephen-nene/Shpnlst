@@ -1,13 +1,16 @@
-import React from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { NavLink, Link } from "react-router-dom";
 
-export default function Footer({ darkMode, setDarkMode }) {
+interface FooterProps {
+  darkMode: boolean;
+  setDarkMode: (v: boolean) => void;
+}
+
+export default function Footer({ darkMode, setDarkMode }: FooterProps) {
   const toggleDarkMode = () => {
-    setDarkMode(() => {
-      localStorage.setItem("darkMode", !darkMode);
-      return !darkMode;
-    });
+    const newValue = !darkMode;
+    setDarkMode(newValue);
+    localStorage.setItem("darkMode", JSON.stringify(newValue));
   };
 
   return (

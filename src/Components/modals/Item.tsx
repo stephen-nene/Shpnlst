@@ -27,7 +27,7 @@ export default function ItemModal({
   isOpen,
   mode,
   item,
-  editingItem,
+  // editingItem,
   onClose,
   onSubmit,
   onFormChange

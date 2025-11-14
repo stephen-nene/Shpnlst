@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
   FaHome,
   FaRobot,
@@ -11,7 +11,6 @@ export default function Error404() {
   const [funMessage, setFunMessage] = useState("Fetching a joke...");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchJoke = async () => {
     setLoading(true);

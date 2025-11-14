@@ -3,12 +3,16 @@ import { FaMoon, FaSun } from "react-icons/fa"; // React Icons
 
 import { NavLink } from "react-router-dom";
 
-export default function Navbar({ darkMode, setDarkMode }) {
+interface Props {
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function Navbar({ darkMode, setDarkMode }: Props) {
   const toggleDarkMode = () => {
-    setDarkMode(() => {
-      localStorage.setItem("darkMode", !darkMode);
-      return !darkMode;
-    });
+    const newValue = !darkMode;
+    setDarkMode(newValue);
+    localStorage.setItem("darkMode", JSON.stringify(newValue));
   };
 
   return (
