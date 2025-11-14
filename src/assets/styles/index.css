@@ -1,13 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Agu+Display&family=Rubik+Vinyl&display=swap');
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
+
+@import "tailwindcss";
+
+/* Tell Tailwind to apply dark: utilities when .dark class is present */
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 a.active{
     color: red;
     font-weight: semibold;
     transition: color 0.5s ease-in-out;
     &:hover{
-        color: #059669;
+        color: #06110e;
     }
 }

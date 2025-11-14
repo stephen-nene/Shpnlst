@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import "../assets/styles/App.css"; // Assuming you have global CSS here
 
 import { Route, Routes } from "react-router-dom";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import Home from "../Components/pages/Home";
-import About from "../Components/pages/About";
+import Navbar from "./Components/Navbar.tsx";
+import Footer from "./Components/Footer.tsx";
+import Home from "./Components/pages/Home.tsx";
+import About from "./Components/pages/About.tsx";
 
-import Error404 from "../Components/pages/Error404";
+import Error404 from "./Components/pages/Error404.tsx";
 
 function App() {
   // Check localStorage for darkMode preference on app start and default to false if not found
@@ -15,7 +14,6 @@ function App() {
     const savedDarkMode = localStorage.getItem("darkMode");
     return savedDarkMode ? savedDarkMode === "true" : false;
   });
-
 
 
   return (

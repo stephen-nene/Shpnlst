@@ -5,9 +5,11 @@ import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter } from 'react-router-dom';
 
 import "./assets/styles/index.css";
-import App from './app/App'
+import "./assets/styles/App.css"; // Assuming you have global CSS here
 
-createRoot(document.getElementById('root')).render(
+import App from './App'
+
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Analytics />
