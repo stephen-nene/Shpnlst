@@ -5,6 +5,7 @@ import Navbar from "./Components/Navbar.tsx";
 import Footer from "./Components/Footer.tsx";
 import Home from "./Components/pages/Home.tsx";
 import About from "./Components/pages/About.tsx";
+import History from "./Components/pages/History.tsx";
 
 import Error404 from "./Components/pages/Error404.tsx";
 
@@ -22,6 +23,7 @@ function App() {
       <div className=" bg-gray-200 min-h-screen dark:bg-gray-800 dark:text-white">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/history" element={<History />} />
           <Route path="/about" element={<About />} />
 
           <Route path="*" element={<Error404 />} />

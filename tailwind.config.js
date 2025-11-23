@@ -16,6 +16,12 @@ export default {
       fontFamily: {
         sans: ["Inter", "Arial", "sans-serif"],
       },
+      spacing: {
+        'safe': 'env(safe-area-inset-bottom)',
+      },
+      minHeight: {
+        'screen-safe': 'calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
+      },
     },
   },
   plugins: [],

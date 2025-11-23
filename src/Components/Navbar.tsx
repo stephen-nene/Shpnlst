@@ -26,8 +26,9 @@ export default function Navbar({ darkMode, setDarkMode }: Props) {
             Shpnlst
           </NavLink>
         </div>
-        <div className="text-lg hover:text-emerald-600 font-bold">
-          <NavLink to="/about">About Us</NavLink>
+        <div className="flex items-center space-x-6 text-lg hover:text-emerald-600 font-bold">
+          <NavLink to="/history">History</NavLink>
+          <NavLink to="/about">About</NavLink>
         </div>
         <div className="flex items-center space-x-4">
           <button onClick={toggleDarkMode} className="text-2xl p-2 rounded">

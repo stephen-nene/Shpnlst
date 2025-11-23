@@ -1,4 +1,4 @@
-package shpnlst.vercel.app
+package shpnlst.com
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

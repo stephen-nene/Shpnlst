@@ -2,9 +2,9 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "shpnlst",
   "version": "0.1.0",
-  "identifier": "shpnlst.vercel.app",
+  "identifier": "shpnlst.com",
   "build": {
-    "beforeDevCommand": "pnpm dev --host",
+    "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"

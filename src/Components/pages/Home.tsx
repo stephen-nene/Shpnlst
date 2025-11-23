@@ -4,6 +4,7 @@ import { FaPlus, FaTrashAlt, FaEdit, FaShoppingCart } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
 import ItemModal from '../modals/Item';
 import { ShoppingItem, ItemFormData, ModalMode } from '../../types/shopping';
+import { addHistoryEvent } from '../../types/history';
 
 // Utility functions
 const generateId = (): string => `id-${Math.random().toString(36).substring(2, 11)}`;
@@ -42,27 +43,27 @@ const ItemComponent: React.FC<ItemComponentProps> = ({ item, onEdit, onDelete, o
 
   return (
     <li
-      className={`p-4 border border-gray-300 rounded-lg transition-all duration-200 ${
+      className={`p-3 sm:p-4 border border-gray-300 rounded-lg transition-all duration-200 ${
         item.checked
           ? 'bg-gray-100 text-gray-500 dark:bg-gray-800 line-through'
           : 'bg-white dark:bg-gray-700'
       } hover:shadow-md`}
     >
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+            <p className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
               {item.name}
             </p>
             {item.category && (
-              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full dark:bg-blue-900 dark:text-blue-200">
+              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full dark:bg-blue-900 dark:text-blue-200 self-start">
                 {item.category}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
-            <span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-600 dark:text-gray-300">
+            <span className="font-medium">
               {item.quantity} {item.unit}
             </span>
             {item.price > 0 && (
@@ -78,26 +79,26 @@ const ItemComponent: React.FC<ItemComponentProps> = ({ item, onEdit, onDelete, o
           </div>
         </div>
 
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center justify-end gap-1 sm:gap-2 sm:ml-4">
           <button
             onClick={() => onEdit(item)}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors dark:text-blue-400 dark:hover:bg-blue-900"
+            className="p-3 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors dark:text-blue-400 dark:hover:bg-blue-900 touch-manipulation"
             title="Edit item"
           >
-            <FaEdit size={16} />
+            <FaEdit size={18} className="sm:w-4 sm:h-4" />
           </button>
           <button
             onClick={() => onDelete(item.id)}
-            className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors dark:text-red-400 dark:hover:bg-red-900"
+            className="p-3 sm:p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors dark:text-red-400 dark:hover:bg-red-900 touch-manipulation"
             title="Delete item"
           >
-            <FaTrashAlt size={16} />
+            <FaTrashAlt size={18} className="sm:w-4 sm:h-4" />
           </button>
           <input
             type="checkbox"
             checked={item.checked}
             onChange={() => onCheck(item.id)}
-            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+            className="w-6 h-6 sm:w-5 sm:h-5 text-blue-600 rounded focus:ring-blue-500 touch-manipulation"
             title="Mark as purchased"
           />
         </div>
@@ -186,6 +187,13 @@ export default function ShoppingList() {
             }
           : item
       ));
+      addHistoryEvent({
+        type: 'item_edited',
+        itemName: itemData.name,
+        itemId: editingItem.id,
+        price: itemData.price,
+        quantity: itemData.quantity
+      });
     } else {
       // Create new item
       const newItem: ShoppingItem = {
@@ -196,6 +204,13 @@ export default function ShoppingList() {
         updatedAt: now
       };
       setItems(prev => [...prev, newItem]);
+      addHistoryEvent({
+        type: 'item_added',
+        itemName: itemData.name,
+        itemId: newItem.id,
+        price: itemData.price,
+        quantity: itemData.quantity
+      });
     }
 
     handleCloseModal();
@@ -203,11 +218,31 @@ export default function ShoppingList() {
 
   const handleDeleteItem = (id: string) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
+      const item = items.find(i => i.id === id);
+      if (item) {
+        addHistoryEvent({
+          type: 'item_deleted',
+          itemName: item.name,
+          itemId: id,
+          price: item.price,
+          quantity: item.quantity
+        });
+      }
       setItems(prev => prev.filter(item => item.id !== id));
     }
   };
 
   const handleCheckItem = (id: string) => {
+    const item = items.find(i => i.id === id);
+    if (item && !item.checked) {
+      addHistoryEvent({
+        type: 'item_completed',
+        itemName: item.name,
+        itemId: id,
+        price: item.price,
+        quantity: item.quantity
+      });
+    }
     setItems(prev => prev.map(item =>
       item.id === id
         ? { ...item, checked: !item.checked, updatedAt: getCurrentDateTime() }
@@ -234,54 +269,55 @@ export default function ShoppingList() {
   const checkedItems = items.filter(item => item.checked);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-2 sm:p-4 pb-safe">
       <Helmet>
         <title>Shopping List App</title>
         <meta
           name="description"
           content="Manage your shopping list with ease, add items, track prices, and more."
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
 
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-3">
-            <FaShoppingCart className="text-blue-600" />
-            Shopping List
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2 sm:gap-3">
+            <FaShoppingCart className="text-blue-600 text-xl sm:text-3xl" />
+            <span className="break-words">Shopping List</span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-4">
             Keep track of your shopping items and expenses
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
               {uncheckedItems.length}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Items to buy</div>
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Items to buy</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
               Ksh {totalPrice.toFixed(2)}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Total cost</div>
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Total cost</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+          <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-lg sm:text-2xl font-bold text-gray-600 dark:text-gray-400">
               {checkedItems.length}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Completed</div>
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Completed</div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
           <button
             onClick={() => handleOpenModal('create')}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors touch-manipulation font-medium"
           >
             <FaPlus size={16} />
             Add New Item
@@ -290,7 +326,7 @@ export default function ShoppingList() {
           {checkedItems.length > 0 && (
             <button
               onClick={handleClearCompleted}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              className="px-4 py-3 sm:py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors touch-manipulation font-medium"
             >
               Clear Completed ({checkedItems.length})
             </button>
@@ -299,23 +335,23 @@ export default function ShoppingList() {
 
         {/* Items List */}
         {items.length === 0 ? (
-          <div className="text-center py-12">
-            <FaShoppingCart size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
+          <div className="text-center py-8 sm:py-12 px-4">
+            <FaShoppingCart size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
               Your shopping list is empty
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-4">
               Add some items to get started!
             </p>
             <button
               onClick={() => handleOpenModal('create')}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors touch-manipulation font-medium"
             >
               Add Your First Item
             </button>
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-2 sm:space-y-3 pb-4">
             {sortedItems.map((item) => (
               <ItemComponent
                 key={item.id}
