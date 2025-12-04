@@ -1,0 +1,57 @@
+name: Check & Lint
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Run ESLint
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Check Rust formatting
+        run: cargo fmt --check --manifest-path=src-tauri/Cargo.toml
+
+      - name: Run Clippy
+        run: cargo clippy --manifest-path=src-tauri/Cargo.toml -- -D warnings
+        continue-on-error: true
+
+      - name: Check Rust build
+        run: cargo check --manifest-path=src-tauri/Cargo.toml
+
+      - name: Build frontend
+        run: pnpm build
