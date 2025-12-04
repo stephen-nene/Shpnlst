@@ -44,6 +44,16 @@ export const getHistory = (): HistoryEvent[] => {
   }
 };
 
+export const deleteHistoryEvent = (id: string) => {
+  const history = getHistory();
+  const filtered = history.filter(e => e.id !== id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
+};
+
+export const clearAllHistory = () => {
+  localStorage.removeItem(HISTORY_KEY);
+};
+
 export const getHistoryStats = (): HistoryStats => {
   const history = getHistory();
   

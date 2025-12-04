@@ -34,7 +34,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          name: E-Procurement ${{ steps.get_version.outputs.version }}
+          name: Shpnlst ${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
         env:
@@ -72,6 +72,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -111,7 +113,7 @@ jobs:
           files: |
             ${{ matrix.bundle_path }}
           tag_name: ${{ needs.create-release.outputs.version }}
-          name: E-Procurement ${{ needs.create-release.outputs.version }}
+          name: Shpnlst ${{ needs.create-release.outputs.version }}
           draft: false
           prerelease: false
         env:
@@ -185,7 +187,7 @@ jobs:
         with:
           files: ${{ steps.find_apk.outputs.apk_path }}
           tag_name: ${{ needs.create-release.outputs.version }}
-          name: E-Procurement ${{ needs.create-release.outputs.version }}
+          name: Shpnlst ${{ needs.create-release.outputs.version }}
           draft: false
           prerelease: false
         env:
