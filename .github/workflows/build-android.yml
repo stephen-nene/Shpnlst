@@ -2,14 +2,13 @@ name: Build Android App
 
 on:
   push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
-  workflow_dispatch: # Allow manual trigger
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-android:
@@ -28,6 +27,18 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10.24.0
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
           
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -39,7 +50,15 @@ jobs:
           rustup target add i686-linux-android
           rustup target add x86_64-linux-android
 
+      - name: Cache cargo-tauri
+        id: cache-cargo-tauri
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-tauri
+          key: ${{ runner.os }}-cargo-tauri
+
       - name: Install cargo-tauri
+        if: steps.cache-cargo-tauri.outputs.cache-hit != 'true'
         run: cargo install tauri-cli
 
       - name: Rust cache
@@ -56,23 +75,26 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Cache Android NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ANDROID_SDK_ROOT }}/ndk/29.0.13846066
+          key: ${{ runner.os }}-ndk-29.0.13846066
+
       - name: Install Android NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: sdkmanager --install "ndk;29.0.13846066"
+
+      - name: Set NDK environment
         run: |
-          sdkmanager --install "ndk;29.0.13846066"
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/29.0.13846066" >> $GITHUB_ENV
           echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/29.0.13846066" >> $GITHUB_ENV
 
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Build Android APK (Debug)
-        if: github.event_name == 'pull_request'
-        run: cargo tauri android build --apk true
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-
-      - name: Build Android APK (Release)
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Build Android APK
         run: cargo tauri android build --apk true
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
