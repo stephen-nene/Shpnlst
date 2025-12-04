@@ -40,6 +40,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libssl-dev
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:

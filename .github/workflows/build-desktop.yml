@@ -1,9 +1,9 @@
 name: Build Desktop Apps
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  # push:
+  #   tags:
+  #     - 'v*.*.*'
   workflow_dispatch:
 
 concurrency:
