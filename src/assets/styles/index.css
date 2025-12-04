@@ -1,13 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Agu+Display&family=Rubik+Vinyl&display=swap');
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
+
+@import "tailwindcss";
+
+@theme {
+  --font-logo: "Rubik Vinyl", serif;
+  --font-logo2: "Agu Display", sans-serif;
+  --font-sans: "Inter", "Arial", sans-serif;
+}
+
+/* Tell Tailwind to apply dark: utilities when .dark class is present */
+@custom-variant dark (&:where(.dark, .dark *));
+/* Mobile-specific styles */
+@media (max-width: 640px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+
+  input, textarea, button {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Safe area support for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Touch-friendly interactions */
+.touch-manipulation {
+  touch-action: manipulation;
+}
 
 a.active{
     color: red;
     font-weight: semibold;
     transition: color 0.5s ease-in-out;
     &:hover{
-        color: #059669;
+        color: #06110e;
     }
 }

@@ -1,0 +1,99 @@
+name: Build Android App
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  build-android:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Rust Android targets
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add armv7-linux-androideabi
+          rustup target add i686-linux-android
+          rustup target add x86_64-linux-android
+
+      - name: Install cargo-tauri
+        run: cargo install tauri-cli
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          sdkmanager --install "ndk;29.0.13846066"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/29.0.13846066" >> $GITHUB_ENV
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/29.0.13846066" >> $GITHUB_ENV
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build Android APK (Debug)
+        if: github.event_name == 'pull_request'
+        run: cargo tauri android build --apk true
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+
+      - name: Build Android APK (Release)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: cargo tauri android build --apk true
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          # Uncomment and add secrets for signing release builds
+          # ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          # ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          # ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          # ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: e-procurement-Android
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          retention-days: 7
+
+      - name: Upload AAB artifact (if exists)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e-procurement-Android-Bundle
+          path: |
+            src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+          retention-days: 7
+        continue-on-error: true

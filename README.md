@@ -28,7 +28,7 @@
 
 
 ![JS](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E
-) 
+)
  ![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white
 )
 ![MARKDOWN](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white
@@ -71,6 +71,12 @@ To get started with the project locally, follow these steps:
    pnpm run dev
    ```
 
+5. **For Desktop development, run**:
+  pnpm tauri dev
+
+6. **For Android development, run**:
+  pnpm tauri android dev
+
 - The app should be running as below
 ```sh
      VITE v6.0.6  ready in 301 ms
@@ -98,7 +104,7 @@ We welcome contributions to improve this project! Please follow the guidelines b
 3. Make your changes and commit them with clear, descriptive commit messages.
 4. Push your changes back to your fork:
 ```bash
-   git push 
+   git push
 ```
 5. Submit a pull request (PR) to the original repository with a description of your changes.
 
@@ -114,3 +120,15 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - Replace `YOUR_USERNAME` in the repository URL with your actual GitHub username.
 
+```sh
+Template created! To get started run:
+  cd shpnlst
+  pnpm install
+  pnpm tauri android init
+
+For Desktop development, run:
+  pnpm tauri dev
+
+For Android development, run:
+  pnpm tauri android dev
+```
