@@ -1,16 +1,34 @@
 import  { useState, useEffect } from 'react';
-import { FaHistory, FaShoppingCart, FaTrophy } from 'react-icons/fa';
+import { FaHistory, FaShoppingCart, FaTrophy, FaTrash } from 'react-icons/fa';
 import { Helmet } from 'react-helmet';
-import { HistoryEvent, HistoryStats, getHistory, getHistoryStats } from '../../types/history';
+import { HistoryEvent, HistoryStats, getHistory, getHistoryStats, deleteHistoryEvent, clearAllHistory } from '../../types/history';
 
 export default function History() {
   const [history, setHistory] = useState<HistoryEvent[]>([]);
   const [stats, setStats] = useState<HistoryStats | null>(null);
 
   useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = () => {
     setHistory(getHistory());
     setStats(getHistoryStats());
-  }, []);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Delete this history item?')) {
+      deleteHistoryEvent(id);
+      loadHistory();
+    }
+  };
+
+  const handleClearAll = () => {
+    if (confirm('Clear all history? This cannot be undone.')) {
+      clearAllHistory();
+      loadHistory();
+    }
+  };
 
   const formatDate = (timestamp: string) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
@@ -101,11 +119,19 @@ export default function History() {
         )}
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <FaShoppingCart className="text-blue-600" />
               Recent Activity
             </h2>
+            {history.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm flex items-center gap-1"
+              >
+                <FaTrash /> Clear All
+              </button>
+            )}
           </div>
 
           {history.length === 0 ? (
@@ -116,11 +142,11 @@ export default function History() {
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {history.map((event) => (
-                <div key={event.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div key={event.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 group">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
                       <span className="text-xl">{getEventIcon(event.type)}</span>
-                      <div>
+                      <div className="flex-1">
                         <p className="text-gray-900 dark:text-white font-medium">
                           {getEventText(event)}
                         </p>
@@ -131,9 +157,18 @@ export default function History() {
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(event.timestamp)}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatDate(event.timestamp)}
+                      </span>
+                      <button
+                        onClick={() => handleDelete(event.id)}
+                        className="opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-opacity"
+                        title="Delete"
+                      >
+                        <FaTrash size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
